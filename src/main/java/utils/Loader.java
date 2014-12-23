@@ -1,7 +1,9 @@
 package utils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.XML;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +11,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import static java.lang.String.format;
@@ -32,7 +36,25 @@ public class Loader {
         return Parser.images(load(format(IMAGES_URL, cacheId)));
     }
 
-    private static String load(String url) {
+    public static JSONArray loadFullData(String[] rect, String[] excludedCaches) throws JSONException {
+        List<String> excludedIds = Arrays.asList(excludedCaches);
+        String url = "http://www.geocaching.su/pages/1031.ajax.php?lngmax=" + rect[0] + "&lngmin=" + rect[1] + "&latmax=" + rect[2] + "&latmin=" + rect[3] + "&id=12345678&geocaching=5767e405a17c4b0e1cbaecffdb93475d&exactly=1";
+        JSONArray caches = XML.toJSONObject(load(url)).getJSONObject("data").getJSONArray("c");
+        JSONArray result = new JSONArray();
+        for (int i = 0; i < caches.length(); i++) {
+            JSONObject obj = caches.getJSONObject(i);
+            String cacheId = obj.getString("id");
+            if (!excludedIds.contains(cacheId)) {
+                obj.put("comments", loadComments(cacheId));
+                obj.put("images", loadImages(cacheId));
+                obj.put("info", loadInfo(cacheId));
+                result.put(obj);
+            }
+        }
+        return result;
+    }
+
+    public static String load(String url) {
         StringBuilder html = new StringBuilder();
         char[] buffer = new char[1024];
         BufferedReader in = null;
