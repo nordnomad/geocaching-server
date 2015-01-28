@@ -115,7 +115,7 @@ public class Parser {
     }
 
     private static String getTextByIndex(Elements els, int idx) {
-        if (els.size() < idx) return "";
+        if (els.size() <= idx) return "";
         if (els.get(idx) != null) return els.get(idx).text();
         return "";
     }
