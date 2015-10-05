@@ -1,6 +1,7 @@
 import java.util.Arrays;
 import java.util.Date;
 
+import static java.lang.String.format;
 import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.SparkBase.port;
@@ -12,6 +13,7 @@ public class Main {
         port(Integer.parseInt(System.getenv("PORT")));
         get("/v1/about", (req, res) -> new Date());
         get("/v1/info/:cacheId", (req, res) -> loadInfo(req.params(":cacheId")));
+        get("/v0/info/:cacheId", (req, res) -> load(format(INFO_URL, req.params(":cacheId"))));
         get("/v1/comments/:cacheId", (req, res) -> loadComments(req.params(":cacheId")));
         get("/v1/images/:cacheId", (req, res) -> loadImages(req.params(":cacheId")));
         get("/v1/fullInfo/:rect/:exclude", (req, res) -> {
@@ -20,9 +22,7 @@ public class Main {
             return loadFullData(rect, excludedCaches);
         });
 
-        exception(Exception.class, (e, req, resp)->{
-            resp.body(Arrays.toString(e.getStackTrace()));
-        });
+        exception(Exception.class, (e, req, resp)-> resp.body(Arrays.toString(e.getStackTrace())));
     }
 
 }

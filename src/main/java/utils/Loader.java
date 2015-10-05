@@ -20,7 +20,7 @@ import static java.lang.String.format;
 public class Loader {
 
     static String PDA_GEOCACHING = "http://pda.geocaching.su";
-    static String INFO_URL = PDA_GEOCACHING + "/cache.php?cid=%s&mode=0";
+    public static String INFO_URL = PDA_GEOCACHING + "/cache.php?cid=%s&mode=0";
     static String COMMENTS_URL = PDA_GEOCACHING + "/note.php?cid=%s&mode=0";
     static String IMAGES_URL = PDA_GEOCACHING + "/pict.php?cid=%s&mode=0";
 
