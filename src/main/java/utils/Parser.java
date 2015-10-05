@@ -75,15 +75,19 @@ public class Parser {
             authorObject.put("name", getTextByIndex(elements, 1));
             authorObject.put("id", doc.select("a[href~=profile.php]").get(0).attr("href").split("=")[1]);
             jsonObject.put("author", authorObject);
-
-            jsonObject.put("created", getTextByIndex(elements, 2));
-            jsonObject.put("updated", getTextByIndex(elements, 3));
-            jsonObject.put("coordinates", getTextByIndex(elements, 4));
-            jsonObject.put("country", getTextByIndex(elements, 5));
-            jsonObject.put("region", getTextByIndex(elements, 6));
-            jsonObject.put("city", getTextByIndex(elements, 7));
-            jsonObject.put("difficulty", getTextByIndex(elements, 8));
-            jsonObject.put("terrain", getTextByIndex(elements, 9));
+            int i = 2;
+            if("Тайник в зимний период НЕДОСТУПЕН".equals(getTextByIndex(elements, i))) {
+                //jsonObject.put("availability", getTextByIndex(elements, i));
+                i++;
+            }
+            jsonObject.put("created", getTextByIndex(elements, i++));
+            jsonObject.put("updated", getTextByIndex(elements, i++));
+            jsonObject.put("coordinates", getTextByIndex(elements, i++));
+            jsonObject.put("country", getTextByIndex(elements, i++));
+            jsonObject.put("region", getTextByIndex(elements, i++));
+            jsonObject.put("city", getTextByIndex(elements, i++));
+            jsonObject.put("difficulty", getTextByIndex(elements, i++));
+            jsonObject.put("terrain", getTextByIndex(elements, i));
         } catch (JSONException e) {
             e.printStackTrace();
         }
