@@ -76,7 +76,9 @@ public class Parser {
             authorObject.put("id", doc.select("a[href~=profile.php]").get(0).attr("href").split("=")[1]);
             jsonObject.put("author", authorObject);
             int i = 2;
-            if("Тайник в зимний период НЕДОСТУПЕН".equals(getTextByIndex(elements, i))) {
+            switch (getTextByIndex(elements, i)) {
+            case "Тайник в зимний период НЕДОСТУПЕН":
+            case "Традиционная часть тайника в зимний период недоступна":
                 //jsonObject.put("availability", getTextByIndex(elements, i));
                 i++;
             }
