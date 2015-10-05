@@ -1,5 +1,6 @@
 import java.util.Date;
 
+import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.SparkBase.port;
 import static utils.Loader.*;
@@ -16,6 +17,10 @@ public class Main {
             String[] rect = req.params(":rect").split("_");
             String[] excludedCaches = req.params(":exclude").split("_");
             return loadFullData(rect, excludedCaches);
+        });
+
+        exception(Exception.class, (e, req, resp)->{
+            resp.body(e.getStackTrace().toString());
         });
     }
 
