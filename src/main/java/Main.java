@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Date;
 
 import static spark.Spark.exception;
@@ -20,7 +21,7 @@ public class Main {
         });
 
         exception(Exception.class, (e, req, resp)->{
-            resp.body(e.getStackTrace().toString());
+            resp.body(Arrays.toString(e.getStackTrace()));
         });
     }
 
