@@ -36,6 +36,14 @@ public class Loader {
         return Parser.images(load(format(IMAGES_URL, cacheId)));
     }
 
+    public static JSONObject loadFullGeoCache(String geoCacheId) throws JSONException {
+        JSONObject obj = new JSONObject();
+        obj.put("comments", loadComments(geoCacheId));
+        obj.put("images", loadImages(geoCacheId));
+        obj.put("info", loadInfo(geoCacheId));
+        return obj;
+    }
+
     public static JSONArray loadFullData(String[] rect, String[] excludedCaches) throws JSONException {
         List<String> excludedIds = Arrays.asList(excludedCaches);
         String url = "http://www.geocaching.su/pages/1031.ajax.php?lngmax=" + rect[0] + "&lngmin=" + rect[1] + "&latmax=" + rect[2] + "&latmin=" + rect[3] + "&id=12345678&geocaching=5767e405a17c4b0e1cbaecffdb93475d&exactly=1";
