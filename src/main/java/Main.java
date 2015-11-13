@@ -16,6 +16,7 @@ public class Main {
         get("/v0/info/:cacheId", (req, res) -> load(format(INFO_URL, req.params(":cacheId"))));
         get("/v1/comments/:cacheId", (req, res) -> loadComments(req.params(":cacheId")));
         get("/v1/images/:cacheId", (req, res) -> loadImages(req.params(":cacheId")));
+        get("/v1/fullGeoCache/:cacheId", (req, res) -> loadFullGeoCache(req.params(":cacheId")));
         get("/v1/fullInfo/:rect/:exclude", (req, res) -> {
             String[] rect = req.params(":rect").split("_");
             String[] excludedCaches = req.params(":exclude").split("_");
