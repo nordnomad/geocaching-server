@@ -59,9 +59,9 @@ public class Parser {
                     node = node.nextSibling();
                     if (node != null) {
                         if (node instanceof TextNode)
-                            result += ((TextNode) node).text();
+                            result += (node).outerHtml();
                         else
-                            result += ((Element) node).text();
+                            result += (node).outerHtml();
                     }
                 }
                 jsonObject.put(key, result);
