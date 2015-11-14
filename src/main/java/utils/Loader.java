@@ -55,7 +55,7 @@ public class Loader {
         JSONArray result = new JSONArray();
         for (int i = 0; i < caches.length(); i++) {
             JSONObject obj = caches.getJSONObject(i);
-            String cacheId = obj.getString("id");
+            String cacheId = obj.get("id").toString();
             if (!excludedIds.contains(cacheId)) {
                 obj.put("comments", loadComments(cacheId));
                 obj.put("images", loadImages(cacheId));
