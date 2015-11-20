@@ -2,9 +2,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import static java.lang.String.format;
-import static spark.Spark.exception;
-import static spark.Spark.get;
-import static spark.SparkBase.port;
+import static spark.Spark.*;
 import static utils.Loader.*;
 
 public class Main {
@@ -23,7 +21,7 @@ public class Main {
             return loadFullData(rect, excludedCaches);
         });
 
-        exception(Exception.class, (e, req, resp)-> resp.body(Arrays.toString(e.getStackTrace())));
+        exception(Exception.class, (e, req, resp) -> resp.body(Arrays.toString(e.getStackTrace())));
     }
 
 }

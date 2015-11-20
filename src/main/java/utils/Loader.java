@@ -47,20 +47,22 @@ public class Loader {
     public static JSONArray loadFullData(String[] rect, String[] excludedCaches) throws JSONException {
         List<String> excludedIds = Arrays.asList(excludedCaches);
         String url = "http://www.geocaching.su/pages/1031.ajax.php?lngmax=" + rect[0] + "&lngmin=" + rect[1] + "&latmax=" + rect[2] + "&latmin=" + rect[3] + "&id=12345678&geocaching=5767e405a17c4b0e1cbaecffdb93475d&exactly=1";
-        JSONObject data = XML.toJSONObject(load(url)).getJSONObject("data");
-        JSONArray caches = data.optJSONArray("c");
-        if (caches == null) {
-            caches = new JSONArray().put(data.optJSONObject("c"));
-        }
         JSONArray result = new JSONArray();
-        for (int i = 0; i < caches.length(); i++) {
-            JSONObject obj = caches.getJSONObject(i);
-            String cacheId = obj.getString("id");
-            if (!excludedIds.contains(cacheId)) {
-                obj.put("comments", loadComments(cacheId));
-                obj.put("images", loadImages(cacheId));
-                obj.put("info", loadInfo(cacheId));
-                result.put(obj);
+        JSONObject data = XML.toJSONObject(load(url)).optJSONObject("data");
+        if (data != null) {
+            JSONArray caches = data.optJSONArray("c");
+            if (caches == null) {
+                caches = new JSONArray().put(data.optJSONObject("c"));
+            }
+            for (int i = 0; i < caches.length(); i++) {
+                JSONObject obj = caches.getJSONObject(i);
+                String cacheId = obj.get("id").toString();
+                if (!excludedIds.contains(cacheId)) {
+                    obj.put("comments", loadComments(cacheId));
+                    obj.put("images", loadImages(cacheId));
+                    obj.put("info", loadInfo(cacheId));
+                    result.put(obj);
+                }
             }
         }
         return result;
