@@ -64,6 +64,8 @@ public class Parser {
                             result += (node).outerHtml();
                     }
                 }
+                result = result.trim();
+                if (result.startsWith("<br>")) result = result.substring(5);
                 jsonObject.put(key, result);
             }
 
