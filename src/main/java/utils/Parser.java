@@ -10,6 +10,9 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Parser {
     public static JSONArray comments(String html) {
         Document doc = Jsoup.parse(html);
@@ -69,6 +72,7 @@ public class Parser {
                 if (result.endsWith("<hr>")) result = result.substring(0, result.length() - 4).trim();
                 if (result.endsWith("<p> <br>&nbsp;<br></p><p></p>"))
                     result = result.substring(0, result.length() - 29).trim();
+                result = insertCheckpointsLink(result);
                 jsonObject.put(key, result);
             }
 
@@ -129,5 +133,43 @@ public class Parser {
         if (els.size() <= idx) return "";
         if (els.get(idx) != null) return els.get(idx).text();
         return "";
+    }
+
+    private static final String degrees = "(?:<sup>(?:&#9702;|0|o|O)</sup>|\\s+|&#176;|&deg;|&nbsp;|\\D{2,6}|градусов)";
+    private static final String minutes = "(?:&rsquo;|'|&#39;|мин)";
+    private static final String delimiter = "[,\\.]";
+    private static final String coordinatePattern = "(\\d+)\\s*" + degrees + "\\s*(\\d+)\\s*" + delimiter + "\\s*(\\d+)";
+    private static final Pattern geoPattern = Pattern.compile("[N|S]?\\s*" + coordinatePattern + "\\D+" + coordinatePattern + "\\s*" + minutes + "?");
+
+    public static String insertCheckpointsLink(String text) {
+        if (text == null) throw new IllegalArgumentException("text is null");
+
+        text = text.replace("</strong><strong>", ""); // prepare string. actually this is server side responsibility
+
+        Matcher pageMatcher = geoPattern.matcher(text);
+        StringBuffer sb = new StringBuffer();
+
+        while (pageMatcher.find()) {
+            int latitudeE6;
+            int longitudeE6;
+            try {
+                int degrees = Integer.parseInt(pageMatcher.group(1));
+                int minutes = Integer.parseInt(pageMatcher.group(2));
+                double milliMinutes = Double.parseDouble("." + pageMatcher.group(3));
+                latitudeE6 = new Sexagesimal(degrees, (double) minutes + milliMinutes).toCoordinateE6();
+
+                degrees = Integer.parseInt(pageMatcher.group(4));
+                minutes = Integer.parseInt(pageMatcher.group(5));
+                milliMinutes = Float.parseFloat("." + pageMatcher.group(6));
+                longitudeE6 = new Sexagesimal(degrees, (double) minutes + milliMinutes).toCoordinateE6();
+            } catch (Exception e) {
+                continue;
+            }
+//            pageMatcher.appendReplacement(sb, String.format("<a href=\"geo:%d,%d\" style=\"color: rgb(86,144,93)\"><b>%s</b></a>", latitudeE6, longitudeE6, pageMatcher.group(0)));
+            pageMatcher.appendReplacement(sb, String.format("<a href=\"#\" style=\"color: rgb(86,144,93)\"><b>%s</b></a>", /*latitudeE6, longitudeE6,*/ pageMatcher.group(0)));
+        }
+
+        pageMatcher.appendTail(sb);
+        return sb.toString();
     }
 }
